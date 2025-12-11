@@ -64,7 +64,7 @@ export function ModernNavbar() {
             onClick={() => navigate('/profile')} // 🔥 नेव्हिगेशन इथे आहे
           >
             {user.profilePhoto ? (
-              <img src={`http://localhost:5000/${user.profilePhoto}`} className="w-6 h-6 rounded-full object-cover border border-gray-300" alt="Profile" />
+              <img src={`https://networxly-app.onrender.com/${user.profilePhoto}`} className="w-6 h-6 rounded-full object-cover border border-gray-300" alt="Profile" />
             ) : (
               <User size={24} />
             )}

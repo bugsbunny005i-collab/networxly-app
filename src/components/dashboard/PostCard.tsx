@@ -31,7 +31,7 @@ export function PostCard({ post, currentUserId, currentUserName, onPostUpdate }:
     setLiked(newLikedState);
     setLikeCount(newLikeCount);
     try {
-      const response = await axios.put(`http://localhost:5000/api/posts/like/${post._id}`, { userId: currentUserId });
+      const response = await axios.put(`https://networxly-app.onrender.com/api/posts/like/${post._id}`, { userId: currentUserId });
       onPostUpdate(response.data.post);
     } catch (error) {
       setLiked(!newLikedState);
@@ -44,7 +44,7 @@ export function PostCard({ post, currentUserId, currentUserName, onPostUpdate }:
     if (!newCommentText.trim()) return;
     setCommentLoading(true);
     try {
-      const response = await axios.post(`http://localhost:5000/api/posts/comment/${post._id}`, {
+      const response = await axios.post(`https://networxly-app.onrender.com/api/posts/comment/${post._id}`, {
         userId: currentUserId, name: currentUserName, text: newCommentText
       });
       onPostUpdate(response.data.post);
@@ -84,7 +84,7 @@ export function PostCard({ post, currentUserId, currentUserName, onPostUpdate }:
       </div>
 
       <div className="px-3 pb-2"><p className="text-sm text-gray-900 whitespace-pre-line">{post.content}</p></div>
-      {post.image && <div className="mt-1"><img src={`http://localhost:5000/${post.image}`} className="w-full h-auto object-cover max-h-[500px]" onError={(e) => { e.currentTarget.style.display = 'none'; }} /></div>}
+      {post.image && <div className="mt-1"><img src={`https://networxly-app.onrender.com/${post.image}`} className="w-full h-auto object-cover max-h-[500px]" onError={(e) => { e.currentTarget.style.display = 'none'; }} /></div>}
 
       <div className="px-4 py-2 flex items-center justify-between border-b border-gray-100 text-xs text-gray-500">
         <div className="flex items-center gap-1"><div className="flex -space-x-1"><div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center z-10"><ThumbsUp className="w-2.5 h-2.5 text-white fill-current" /></div></div><span>{post.likes.length} Likes</span></div>

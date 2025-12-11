@@ -15,7 +15,7 @@ export function Login() {
 
     try {
       // User Website Login API Call
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const res = await axios.post('https://networxly-app.onrender.com/api/auth/login', { email, password });
       
       if (res.data.success) {
         sessionStorage.setItem('veritas_user', JSON.stringify(res.data.user));

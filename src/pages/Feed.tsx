@@ -15,7 +15,7 @@ export function Feed() {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/posts/feed');
+      const res = await axios.get('https://networxly-app.onrender.com/api/posts/feed');
       if (res.data.success) {
         setPosts(res.data.posts);
       }
@@ -28,7 +28,7 @@ export function Feed() {
     setLoading(true);
     
     try {
-      const res = await axios.post('http://localhost:5000/api/posts/create', {
+      const res = await axios.post('https://networxly-app.onrender.com/api/posts/create', {
         content: input,
         authorId: user._id,
         authorName: user.name,
@@ -52,7 +52,7 @@ export function Feed() {
           {/* User Avatar */}
           <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
             {user.profilePhoto ? (
-              <img src={`http://localhost:5000/${user.profilePhoto}`} className="w-full h-full object-cover" />
+              <img src={`https://networxly-app.onrender.com/${user.profilePhoto}`} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center font-bold text-gray-500 text-lg">
                 {user.name?.charAt(0)}
@@ -97,7 +97,7 @@ export function Feed() {
           <div className="p-3 flex gap-3">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 border border-gray-200 cursor-pointer">
               {post.authorPhoto ? (
-                <img src={`http://localhost:5000/${post.authorPhoto}`} className="w-full h-full object-cover" />
+                <img src={`https://networxly-app.onrender.com/${post.authorPhoto}`} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center font-bold text-gray-500">
                   {post.authorName?.charAt(0)}
@@ -130,7 +130,7 @@ export function Feed() {
           {/* Image */}
           {post.image && (
             <div className="w-full mt-2 cursor-pointer">
-              <img src={`http://localhost:5000/${post.image}`} className="w-full h-auto object-cover" alt="Post content" />
+              <img src={`https://networxly-app.onrender.com/${post.image}`} className="w-full h-auto object-cover" alt="Post content" />
             </div>
           )}
 

@@ -23,7 +23,7 @@ export function MyNetworkPage() {
 
   const fetchNetwork = async (userId: string) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/users/network/${userId}`);
+      const res = await axios.get(`https://networxly-app.onrender.com/api/users/network/${userId}`);
       setNetworkUsers(res.data.users);
     } catch (error) { console.error("Error fetching network"); }
   };

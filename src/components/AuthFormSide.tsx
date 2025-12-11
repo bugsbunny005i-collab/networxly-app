@@ -39,9 +39,9 @@ export function AuthFormSide() {
         let res;
         
         if (isLogin) {
-            res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            res = await axios.post('https://networxly-app.onrender.com/api/auth/login', { email, password });
         } else {
-            res = await axios.post('http://localhost:5000/api/auth/register', { 
+            res = await axios.post('https://networxly-app.onrender.com/api/auth/register', { 
                 firstName, 
                 lastName, 
                 email, 
@@ -74,7 +74,7 @@ export function AuthFormSide() {
           { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
         );
         const { name, email, picture } = userInfo.data;
-        const res = await axios.post('http://localhost:5000/api/auth/google', {
+        const res = await axios.post('https://networxly-app.onrender.com/api/auth/google', {
           name: name, email: email, photo: picture
         });
         if (res.data.success) {

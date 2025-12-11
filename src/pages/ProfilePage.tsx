@@ -29,7 +29,7 @@ export function ProfilePage() {
       if (!targetId) return;
       try {
         // Fetch User Info
-        const userRes = await axios.get(`http://localhost:5000/api/user/get/${targetId}`);
+        const userRes = await axios.get(`https://networxly-app.onrender.com/api/user/get/${targetId}`);
         if (userRes.data.success) {
           setProfileUser(userRes.data.user);
           setEditForm({
@@ -39,7 +39,7 @@ export function ProfilePage() {
           });
         }
         // Fetch User Posts
-        const postsRes = await axios.get(`http://localhost:5000/api/posts/user/${targetId}`);
+        const postsRes = await axios.get(`https://networxly-app.onrender.com/api/posts/user/${targetId}`);
         if (postsRes.data.success) {
           setUserPosts(postsRes.data.posts);
         }
@@ -51,7 +51,7 @@ export function ProfilePage() {
   // 2. Handle Profile Update
   const handleUpdateProfile = async () => {
     try {
-      const res = await axios.put('http://localhost:5000/api/user/update', { email: profileUser.email, ...editForm });
+      const res = await axios.put('https://networxly-app.onrender.com/api/user/update', { email: profileUser.email, ...editForm });
       if (res.data.success) {
         setProfileUser(res.data.user);
         setIsEditMode(false);
@@ -69,7 +69,7 @@ export function ProfilePage() {
       formData.append('profilePhoto', file);
 
       try {
-        const res = await axios.put('http://localhost:5000/api/user/update-photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        const res = await axios.put('https://networxly-app.onrender.com/api/user/update-photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         if (res.data.success) {
           setProfileUser(res.data.user);
           if(isOwnProfile) sessionStorage.setItem('veritas_user', JSON.stringify(res.data.user));
@@ -98,7 +98,7 @@ export function ProfilePage() {
             <div className="relative group">
               <div className="w-32 h-32 bg-white rounded-full p-1 shadow-md relative overflow-hidden">
                 {profileUser.profilePhoto ? (
-                  <img src={`http://localhost:5000/${profileUser.profilePhoto}`} className="w-full h-full rounded-full object-cover" />
+                  <img src={`https://networxly-app.onrender.com/${profileUser.profilePhoto}`} className="w-full h-full rounded-full object-cover" />
                 ) : (
                   <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center text-4xl font-bold text-gray-400">{profileUser.name?.charAt(0)}</div>
                 )}

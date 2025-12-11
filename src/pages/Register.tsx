@@ -18,7 +18,7 @@ export function Register() {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const res = await axios.post('https://networxly-app.onrender.com/api/auth/register', formData);
       
       if (res.data.success) {
         alert("Registration Successful! Please Login.");

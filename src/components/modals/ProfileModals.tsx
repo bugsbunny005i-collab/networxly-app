@@ -29,7 +29,7 @@ export function AddExperienceModal({ isOpen, onClose }: { isOpen: boolean; onClo
   // 🔥 Fetch Registered Companies on Load
   useEffect(() => {
     if (isOpen) {
-      axios.get('http://localhost:5000/api/partners/all').then(res => {
+      axios.get('https://networxly-app.onrender.com/api/partners/all').then(res => {
         if (res.data.success) {
           // फक्त 'Company' रोल असलेले पार्टनर्स फिल्टर करा
           const comps = res.data.partners.filter((p: any) => p.role === 'Company');
@@ -51,7 +51,7 @@ export function AddExperienceModal({ isOpen, onClose }: { isOpen: boolean; onClo
     Object.keys(form).forEach(key => formData.append(key, form[key as keyof typeof form]));
 
     try {
-      const res = await axios.post('http://localhost:5000/api/user/add-experience', formData, {
+      const res = await axios.post('https://networxly-app.onrender.com/api/user/add-experience', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (res.data.success) {
@@ -147,7 +147,7 @@ export function AddEducationModal({ isOpen, onClose }: { isOpen: boolean; onClos
   // 🔥 Fetch Registered Universities on Load
   useEffect(() => {
     if (isOpen) {
-      axios.get('http://localhost:5000/api/partners/all').then(res => {
+      axios.get('https://networxly-app.onrender.com/api/partners/all').then(res => {
         if (res.data.success) {
           // फक्त 'University' रोल असलेले पार्टनर्स फिल्टर करा
           const unis = res.data.partners.filter((p: any) => p.role === 'University');
@@ -169,7 +169,7 @@ export function AddEducationModal({ isOpen, onClose }: { isOpen: boolean; onClos
     Object.keys(form).forEach(key => formData.append(key, form[key as keyof typeof form]));
 
     try {
-      const res = await axios.post('http://localhost:5000/api/user/add-education', formData, {
+      const res = await axios.post('https://networxly-app.onrender.com/api/user/add-education', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (res.data.success) {

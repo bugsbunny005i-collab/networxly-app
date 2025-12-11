@@ -29,7 +29,7 @@ export function MessagingPage() {
   // चॅट लिस्टसाठी सर्व युजर्स आणणे
   const fetchUsers = async (currentUserId: string) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/users/network/${currentUserId}`);
+      const res = await axios.get(`https://networxly-app.onrender.com/api/users/network/${currentUserId}`);
       setConversations(res.data.users);
     } catch (error) { console.error("Error fetching users"); }
   };
@@ -38,7 +38,7 @@ export function MessagingPage() {
   const fetchMessages = async (otherUserId: string) => {
     if (!user) return;
     try {
-      const res = await axios.get(`http://localhost:5000/api/messages/${user._id}/${otherUserId}`);
+      const res = await axios.get(`https://networxly-app.onrender.com/api/messages/${user._id}/${otherUserId}`);
       setMessages(res.data.messages);
       scrollToBottom();
     } catch (error) { console.error("Error fetching messages"); }
@@ -50,7 +50,7 @@ export function MessagingPage() {
     if (!newMessage.trim() || !selectedUser) return;
 
     try {
-      const res = await axios.post('http://localhost:5000/api/messages/send', {
+      const res = await axios.post('https://networxly-app.onrender.com/api/messages/send', {
         sender: user._id,
         receiver: selectedUser._id,
         text: newMessage

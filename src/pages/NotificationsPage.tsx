@@ -21,7 +21,7 @@ export function NotificationsPage() {
 
   const fetchNotifications = async (userId: string) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/notifications/${userId}`);
+      const res = await axios.get(`https://networxly-app.onrender.com/api/notifications/${userId}`);
       setNotifications(res.data.notifications);
     } catch (error) { console.error("Error fetching notifications"); }
   };

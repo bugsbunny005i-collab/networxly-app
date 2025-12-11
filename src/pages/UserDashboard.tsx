@@ -33,7 +33,7 @@ function EditProfileModal({ isOpen, onClose, user, onSave }: any) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.put('http://localhost:5000/api/user/update', {
+      const res = await axios.put('https://networxly-app.onrender.com/api/user/update', {
         email: user.email,
         headline: formData.headline,
         location: formData.location,
@@ -147,7 +147,7 @@ function VerificationModal({ isOpen, onClose, user }: any) {
         if (idCardProof) formData.append('idCardProof', idCardProof);
       }
 
-      await axios.post('http://localhost:5000/api/verification/create', formData, {
+      await axios.post('https://networxly-app.onrender.com/api/verification/create', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 

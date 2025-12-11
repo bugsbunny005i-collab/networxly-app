@@ -36,7 +36,7 @@ function PostComposerModal({ isOpen, onClose, user, onPostCreated }: any) {
             if (user.headline) formData.append('authorHeadline', user.headline);
             if (image) formData.append('postImage', image);
 
-            const response = await axios.post('http://localhost:5000/api/posts/create', formData, {
+            const response = await axios.post('https://networxly-app.onrender.com/api/posts/create', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
@@ -112,7 +112,7 @@ export function MainFeed({ user }: any) {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/api/posts/feed');
+      const response = await axios.get('https://networxly-app.onrender.com/api/posts/feed');
       setPosts(response.data.posts);
     } catch (error) {
       console.error("Error fetching posts:", error);

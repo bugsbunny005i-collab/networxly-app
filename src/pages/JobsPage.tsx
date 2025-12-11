@@ -17,7 +17,7 @@ function CreateJobModal({ isOpen, onClose, user, onJobCreated }: any) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/jobs/create', {
+      const res = await axios.post('https://networxly-app.onrender.com/api/jobs/create', {
         ...formData,
         postedBy: user._id
       });
@@ -71,7 +71,7 @@ export function JobsPage() {
 
   const fetchJobs = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/jobs/all');
+      const res = await axios.get('https://networxly-app.onrender.com/api/jobs/all');
       setJobs(res.data.jobs);
     } catch (error) { console.error("Error fetching jobs"); }
   };
