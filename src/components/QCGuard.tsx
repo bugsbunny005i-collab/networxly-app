@@ -6,6 +6,14 @@ export function QCGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
+    // 1. URL मध्ये पासवर्ड आहे का ते चेक करा (ही आपली नवीन जादू!)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('unlock') === 'NetworxlyBoss') {
+      localStorage.setItem('veritas_qc_access', 'granted');
+      setHasAccess(true);
+    }
+
+    // 2. ब्राउझरमध्ये आधीच ॲक्सेस आहे का ते बघा
     const access = localStorage.getItem('veritas_qc_access');
     if (access === 'granted') {
       setHasAccess(true);
@@ -13,13 +21,13 @@ export function QCGuard({ children }: { children: React.ReactNode }) {
     setChecking(false);
   }, []);
 
-  if (checking) return null; // Loading state
+  if (checking) return null; 
 
-  // जर Access नसेल तर Maintenance Page दाखवा
+  // जर ॲक्सेस नसेल तर Maintenance Page दाखवा
   if (!hasAccess) {
     return <Maintenance />;
   }
 
-  // जर Access असेल तर Website दाखवा
+  // जर ॲक्सेस असेल तर Website दाखवा
   return <>{children}</>;
 }
