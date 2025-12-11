@@ -1,5 +1,5 @@
 // ==================================================
-// 🚀 VERITAS BACKEND SERVER - FULL VERSION
+// 🚀 VERITAS BACKEND SERVER - FULL SECURITY VERSION
 // ==================================================
 
 const express = require('express');
@@ -64,8 +64,14 @@ app.use(hpp());
 // ==================================================
 
 // CORS Configuration (Allow Frontend)
+// ✅ UPDATED: Added networxly.online domains
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://networxly-app.onrender.com'], 
+    origin: [
+        'http://localhost:5173', 
+        'https://networxly-app.onrender.com',
+        'https://networxly.online',
+        'https://www.networxly.online'
+    ], 
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
