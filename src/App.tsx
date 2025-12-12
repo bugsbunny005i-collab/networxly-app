@@ -1,16 +1,15 @@
 import React from 'react';
+// BrowserRouter, Routes, आणि Route हे Routing साठी लागतात (हे आवश्यक होते)
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // --- Pages Imports ---
-// (तुम्ही आधी बनवलेले सर्व आवश्यक पेजेस)
+// (Login आणि Register हे Navigation साठी लागतात)
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
-// Feed, JobPage, etc. imports...
-import { Feed } from './pages/Feed'; 
-import { JobPage } from './pages/JobPage';
+import { Feed } from './pages/Feed'; // Feed Page
 
-// --- Components Imports (Landing Page साठी लागणारे) ---
-// हे सर्व 7 components तुमच्या Original App.tsx मध्ये होते
+// --- Components Imports (Landing Page साठी लागणारे सर्व ७ कंपोनेंट्स) ---
+// हे सर्व कंपोनेंट्स तुमच्या मूळ फाइलमध्ये होते
 import { VeritasNavbar } from './components/VeritasNavbar';
 import { VeritasHero3D } from './components/VeritasHero3D';
 import { VeritasWhySection } from './components/VeritasWhySection';
@@ -20,7 +19,7 @@ import { VeritasCTA } from './components/VeritasCTA';
 import { VeritasFooter } from './components/VeritasFooter';
 
 // --- Landing Page Component ---
-// (हा तुमचा मूळ Home Page चा कोड आहे, सर्व 7 components इथे आहेत)
+// (तुमचे सर्व ७ कंपोनेंट्स इथे रेंडर होतात)
 function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0A1628] text-white selection:bg-[#D4AF37] selection:text-[#0A1628]">
@@ -40,6 +39,7 @@ function LandingPage() {
 }
 
 // --- Main App Component with Full Routing ---
+// (यामुळे useNavigate() चालेल)
 export function App() {
   return (
     <Router>
@@ -53,7 +53,8 @@ export function App() {
 
         {/* 3. Main Application Pages */}
         <Route path="/feed" element={<Feed />} />
-        <Route path="/jobs" element={<JobPage />} />
+
+        {/* महत्त्वाची टीप: JobPage चा import आणि route तुमच्याकडे फाईल नसल्याने काढला आहे. */}
       </Routes>
     </Router>
   );
