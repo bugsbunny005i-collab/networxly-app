@@ -3,6 +3,7 @@ import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { VeritasButton } from './ui/VeritasButton';
 import { Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; // 🔥 Navigation Import
+import logo from '../assets/logo.png'; // 🔥 LOGO IMPORT KELA (Navin Image)
 
 export function VeritasNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,19 +32,18 @@ export function VeritasNavbar() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         
-        {/* Logo */}
+        {/* Logo Section - UPDATED */}
         <div 
           className="flex items-center gap-2 group cursor-pointer" 
           onClick={() => navigate('/')}
         >
-          <div className="w-10 h-10 bg-[#0A1628] flex items-center justify-center rounded-sm transform rotate-45 group-hover:rotate-0 transition-transform duration-500">
-            <span className="text-[#D4AF37] font-serif font-bold text-2xl -rotate-45 group-hover:rotate-0 transition-transform duration-500">
-              V
-            </span>
-          </div>
-          <span className="text-2xl font-serif font-bold text-[#0A1628] tracking-wide">
-            VERITAS
-          </span>
+          {/* JUANA LOGO KADHLA AANI NAVIN IMAGE TAKLI */}
+          <img 
+            src={logo} 
+            alt="Networxly" 
+            className="h-12 w-auto object-contain" 
+            /* टीप: जर लोगो खूप मोठा वाटला तर h-12 च्या जागी h-10 कर */
+          />
         </div>
 
         {/* Desktop Links & Buttons */}
