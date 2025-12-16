@@ -32,6 +32,39 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ==================================================
+// ⚙️ STANDARD MIDDLEWARES (FIXED: Moved before Security Middlewares)
+// ==================================================
+
+// CORS Configuration (Allow Frontend)
+// ✅ UPDATED: Added networxly.online domains
+app.use(cors({
+    origin: [
+        'http://localhost:5173', 
+        'https://networxly-app.onrender.com',
+        'https://networxly.online',
+        'https://www.networxly.online'
+    ], 
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Body Parser (Limit payload size to prevent crash)
+// FIX 1: Body parsers (express.json, express.urlencoded) security middlewares च्या आधी हलवले.
+app.use(express.json({ limit: '10kb' })); 
+app.use(express.urlencoded({ extended: true, limit: '10kb' })); 
+
+// Uploads Folder Public Access
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Debugging Middleware (Request Logger)
+app.use((req, res, next) => {
+    console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+
+// ==================================================
 // 🛡️ SECURITY MIDDLEWARES (DO NOT REMOVE)
 // ==================================================
 
@@ -59,36 +92,6 @@ app.use(xss());
 // 5. HPP: Prevent HTTP Parameter Pollution
 app.use(hpp());
 
-// ==================================================
-// ⚙️ STANDARD MIDDLEWARES
-// ==================================================
-
-// CORS Configuration (Allow Frontend)
-// ✅ UPDATED: Added networxly.online domains
-app.use(cors({
-    origin: [
-        'http://localhost:5173', 
-        'https://networxly-app.onrender.com',
-        'https://networxly.online',
-        'https://www.networxly.online'
-    ], 
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Body Parser (Limit payload size to prevent crash)
-app.use(express.json({ limit: '10kb' })); 
-app.use(express.urlencoded({ extended: true, limit: '10kb' })); 
-
-// Uploads Folder Public Access
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Debugging Middleware (Request Logger)
-app.use((req, res, next) => {
-    console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.url}`);
-    next();
-});
 
 // ==================================================
 // 📂 FILE UPLOAD CONFIGURATION (MULTER)
@@ -190,7 +193,8 @@ app.post('/api/auth/login', async (req, res) => {
         const { email, password } = req.body;
         if (!email || !password) return res.json({ success: false, message: "Missing credentials" });
 
-        const user = await User.findOne({ email });
+        // FIX: Explicitly select the password field for comparison
+        const user = await User.findOne({ email }).select('+password');
         if (!user) return res.json({ success: false, message: "User not found" });
 
         // Check if user registered via Google
@@ -201,6 +205,8 @@ app.post('/api/auth/login', async (req, res) => {
         if (!isMatch) return res.json({ success: false, message: "Invalid Credentials" });
         
         console.log(`✅ User Logged In: ${email}`);
+        // FIX: Remove password hash before sending response
+        user.password = undefined; 
         res.json({ success: true, user });
 
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
@@ -245,7 +251,9 @@ app.put('/api/user/update', async (req, res) => {
 app.put('/api/user/update-photo', upload.single('profilePhoto'), async (req, res) => {
     try {
         if (!req.file) return res.json({ success: false, message: "No file uploaded" });
-        const user = await User.findByIdAndUpdate(req.body.userId, { profilePhoto: req.file.path }, { new: true });
+        // FIX 2: Store only the filename (which is unique) for security/path consistency
+        const profilePhotoFilename = req.file.filename; 
+        const user = await User.findByIdAndUpdate(req.body.userId, { profilePhoto: profilePhotoFilename }, { new: true });
         res.json({ success: true, user });
     } catch (e) { res.status(500).json({ success: false, message: e.message }); }
 });
@@ -267,26 +275,32 @@ app.post('/api/user/add-experience', upload.single('proofDocument'), async (req,
     try {
         const { userId, title, company, location, startDate, endDate, description } = req.body;
         const user = await User.findById(userId);
-        const proofPath = req.file ? req.file.path : "";
+        // FIX 3: Store only the filename
+        const proofFilename = req.file ? req.file.filename : "";
 
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        // Add to User Profile
-        user.experience.push({ 
+        // 1. Add to User Profile
+        const newExperience = { 
             title, company, location, startDate, endDate, description, 
             verificationStatus: 'Pending', 
-            proofDocument: proofPath 
-        });
+            proofDocument: proofFilename 
+        };
+        user.experience.push(newExperience);
         await user.save();
+        
+        // FIX 4: Find the newly created sub-document's ID for accurate verification update
+        const newItemId = user.experience[user.experience.length - 1]._id; 
 
-        // Create Verification Request for Admin/Partner
+        // 2. Create Verification Request for Admin/Partner
         const v = new Verification({ 
             fullName: user.name, 
             userEmail: user.email, 
             type: 'Experience Verification', 
             companyName: company, 
             status: 'Pending', 
-            addressProof: proofPath 
+            addressProof: proofFilename, // Note: Saved as addressProof, should be proofDocument in Verification Model
+            itemId: newItemId // Critical fix for accurate update later
         });
         await v.save();
 
@@ -301,26 +315,32 @@ app.post('/api/user/add-education', upload.single('proofDocument'), async (req, 
     try {
         const { userId, school, degree, field, startDate, endDate, grade } = req.body;
         const user = await User.findById(userId);
-        const proofPath = req.file ? req.file.path : "";
+        // FIX 5: Store only the filename
+        const proofFilename = req.file ? req.file.filename : "";
 
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        // Add to User Profile
-        user.education.push({ 
+        // 1. Add to User Profile
+        const newEducation = { 
             school, degree, field, startDate, endDate, grade, 
             verificationStatus: 'Pending', 
-            proofDocument: proofPath 
-        });
+            proofDocument: proofFilename 
+        };
+        user.education.push(newEducation);
         await user.save();
 
-        // Create Verification Request
+        // FIX 6: Find the newly created sub-document's ID for accurate verification update
+        const newItemId = user.education[user.education.length - 1]._id;
+
+        // 2. Create Verification Request
         const v = new Verification({ 
             fullName: user.name, 
             userEmail: user.email, 
             type: 'Education Verification', 
             university: school, 
             status: 'Pending', 
-            addressProof: proofPath 
+            addressProof: proofFilename, // Note: Saved as addressProof, should be proofDocument in Verification Model
+            itemId: newItemId // Critical fix for accurate update later
         });
         await v.save();
 
@@ -361,13 +381,17 @@ app.post('/api/partner/create', async (req, res) => {
 app.post('/api/partner/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const partner = await Partner.findOne({ email });
+        // FIX: Explicitly select the password field for comparison
+        const partner = await Partner.findOne({ email }).select('+password');
         
         if (!partner) return res.json({ success: false, message: "Partner not found" });
 
         // Check Encrypted Password
         const isMatch = await bcrypt.compare(password, partner.password);
         if (!isMatch) return res.json({ success: false, message: "Invalid Credentials" });
+
+        // FIX: Remove password hash before sending response
+        partner.password = undefined;
 
         res.json({ success: true, partner });
 
@@ -420,7 +444,9 @@ app.post('/api/admin/broadcast', async (req, res) => {
 // Create Post
 app.post('/api/posts/create', upload.single('postImage'), async (req, res) => { 
     try { 
-        const p = new Post({ ...req.body, image: req.file ? req.file.path : "" }); 
+        // FIX 7: Store only the filename
+        const imageFilename = req.file ? req.file.filename : "";
+        const p = new Post({ ...req.body, image: imageFilename }); 
         await p.save(); 
         res.json({ success: true, post: p }); 
     } catch (e) { res.status(500).json({ success: false, message: e.message }); } 
@@ -513,11 +539,15 @@ app.get('/api/notifications/:userId', async (req, res) => {
 // Create General Verification (Identity)
 app.post('/api/verification/create', upload.fields([{ name: 'addressProof' }, { name: 'idCardProof' }]), async (req, res) => { 
     try { 
+        // FIX 8: Store only the filenames
+        const addressProofFilename = req.files['addressProof']?.[0].filename;
+        const idCardProofFilename = req.files['idCardProof']?.[0].filename;
+
         const v = new Verification({ 
             ...req.body, 
             userEmail: req.body.email, 
-            addressProof: req.files['addressProof']?.[0].path, 
-            idCardProof: req.files['idCardProof']?.[0].path 
+            addressProof: addressProofFilename, 
+            idCardProof: idCardProofFilename 
         }); 
         await v.save(); 
         res.json({ success: true }); 
@@ -570,14 +600,15 @@ app.put('/api/verification/final-verify', async (req, res) => {
         
         // If Verified, Update the User's Profile directly
         if (s === 'Verified') { 
+            // FIX 9: Unique itemId चा वापर करून अचूक sub-document अपडेट करणे
             if (v.type === 'Experience Verification') {
                 await User.updateOne(
-                    { email: v.userEmail, "experience.company": v.companyName }, 
+                    { email: v.userEmail, "experience._id": v.itemId }, 
                     { $set: { "experience.$.verificationStatus": "Verified" } }
                 ); 
             } else if (v.type === 'Education Verification') {
                 await User.updateOne(
-                    { email: v.userEmail, "education.school": v.university }, 
+                    { email: v.userEmail, "education._id": v.itemId }, 
                     { $set: { "education.$.verificationStatus": "Verified" } }
                 ); 
             } else {
